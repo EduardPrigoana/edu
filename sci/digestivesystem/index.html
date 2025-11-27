@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Digestive System</title>
+    <link rel="icon" type="image/png" href="https://prigoana.com/favicon.png">
+    <style>
+        :root {
+            --ease-quart: cubic-bezier(0.76, 0, 0.24, 1);
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        html[data-theme="dark"] {
+            --background: #000000;
+            --foreground: #ffffff;
+            --muted-foreground: #a1a1aa;
+            --border: #27272a;
+            --card-background: #0a0a0a;
+            --shadow-color: rgba(255, 255, 255, 0.1);
+            color-scheme: dark;
+        }
+
+        html[data-theme="light"] {
+            --background: #ffffff;
+            --foreground: #000000;
+            --muted-foreground: #52525b;
+            --border: #e4e4e7;
+            --card-background: #f9f9f9;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+            color-scheme: light;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            background-color: var(--background);
+            color: var(--foreground);
+            font-synthesis: none;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            -webkit-text-size-adjust: 100%;
+            transition: background-color 0.4s var(--ease-quart), color 0.4s var(--ease-quart);
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+            overflow-y: hidden;
+            overflow-x: scroll;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .container::-webkit-scrollbar { display: none; }
+
+        .slide {
+            flex: 0 0 100vw;
+            width: 100vw;
+            height: 100vh;
+            scroll-snap-align: start;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            padding: 2rem;
+            gap: 2rem;
+            border-right: 1px solid var(--border);
+            transition: border-color 0.4s var(--ease-quart);
+        }
+        .picture-half {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            background-color: var(--card-background);
+            padding: 2rem;
+            transition: transform 0.4s var(--ease-out-expo), box-shadow 0.4s var(--ease-out-expo), border-color 0.4s var(--ease-quart), background-color 0.4s var(--ease-quart);
+            overflow: hidden;
+        }
+        .slide-image {
+            width: 80%;
+            height: 80%;
+            max-width: 450px;
+            max-height: 450px;
+            object-fit: contain;
+            transition: transform 0.4s var(--ease-out-expo);
+            opacity: 0;
+            transform: scale(0.9);
+            animation: svg-pop-in 0.6s var(--ease-out-expo) forwards;
+        }
+
+        .info-half {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow-y: auto;
+            padding: 0 1rem;
+        }
+        .info-half h2, .info-half h3, .info-half p, .info-half ul, .info-half .badges, .info-half .enzyme-box {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: content-fade-in 0.6s var(--ease-out-expo) forwards;
+        }
+        .info-half h2 { font-size: 2.5rem; font-weight: 700; margin-bottom: 1.5rem; letter-spacing: -0.05em; transition: color 0.4s var(--ease-quart); }
+        .info-half h3 { font-size: 1.25rem; font-weight: 500; color: var(--muted-foreground); margin-top: 1.5rem; margin-bottom: 0.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; transition: border-color 0.4s var(--ease-quart), color 0.4s var(--ease-quart); }
+        .info-half p, .info-half ul { font-size: 1rem; line-height: 1.7; color: var(--muted-foreground); transition: color 0.4s var(--ease-quart); }
+        .info-half ul { list-style-position: inside; padding-left: 0.5rem; }
+        .info-half li { margin-bottom: 0.5rem; }
+
+        .enzyme-box {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: var(--card-background);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            transition: background-color 0.4s var(--ease-quart), border-color 0.4s var(--ease-quart);
+        }
+        .enzyme-box h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--foreground);
+        }
+        .enzyme-box ul {
+            margin: 0;
+            padding-left: 1rem;
+        }
+        .enzyme-box li {
+            font-size: 0.95rem;
+            margin-bottom: 0.35rem;
+        }
+
+        .picture-half:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 35px -5px var(--shadow-color);
+        }
+        .picture-half:hover .slide-image {
+            transform: scale(1.05) rotate(-2deg);
+        }
+
+        .is-visible .slide-image,
+        .is-visible .info-half > * {
+            animation-play-state: running;
+        }
+        @keyframes svg-pop-in { to { opacity: 1; transform: scale(1); } }
+        @keyframes content-fade-in { to { opacity: 1; transform: translateY(0); } }
+
+        .intro-overlay {
+            position: fixed; inset: 0; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 100;
+            opacity: 1; transition: opacity 0.5s ease-in-out, visibility 0.5s;
+        }
+        .intro-overlay.hidden { opacity: 0; visibility: hidden; }
+        .intro-text { color: white; font-size: 1.5rem; margin-bottom: 1rem; opacity: 0; animation: intro-fade-in 0.8s 0.2s var(--ease-out-expo) forwards; }
+        .intro-instruction { color: #a1a1aa; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem; opacity: 0; animation: intro-fade-in 0.8s 0.4s var(--ease-out-expo) forwards; }
+        .intro-instruction code { padding: 0.2em 0.4em; background-color: #27272a; border-radius: 4px; font-size: 0.9em; }
+        @keyframes intro-fade-in {
+            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translateY(10px); }
+        }
+
+        .ui-container { position: fixed; top: 1.5rem; right: 1.5rem; z-index: 50; }
+        .theme-toggle {
+            position: relative;
+            background: var(--card-background);
+            border: 1px solid var(--border);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s var(--ease-out-expo);
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+            box-shadow: 0 0 15px var(--shadow-color);
+        }
+        .theme-toggle svg {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            stroke: var(--foreground);
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: all 0.4s var(--ease-out-expo);
+        }
+        html[data-theme="dark"] .theme-toggle .sun { transform: translate(-50%, -50%) scale(0) rotate(-90deg); opacity: 0; }
+        html[data-theme="light"] .theme-toggle .moon { transform: translate(-50%, -50%) scale(0) rotate(90deg); opacity: 0; }
+
+        .nav-arrow {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 44px;
+            height: 44px;
+            background-color: var(--card-background);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 50;
+            transition: all 0.3s var(--ease-out-expo);
+            opacity: 0.7;
+        }
+        .nav-arrow:hover {
+            transform: translateY(-50%) scale(1.1);
+            opacity: 1;
+            box-shadow: 0 0 15px var(--shadow-color);
+        }
+        .nav-arrow.left { left: 1.5rem; }
+        .nav-arrow.right { right: 1.5rem; }
+        .nav-arrow svg { stroke: var(--foreground); width: 24px; height: 24px; transition: stroke 0.4s var(--ease-quart); }
+
+        @media (max-width: 768px) {
+            .slide { grid-template-columns: 1fr; grid-template-rows: 40vh 1fr; padding: 1rem; gap: 1rem; height: 100vh; }
+            .info-half { padding: 1rem 0; }
+            .info-half h2 { font-size: 2rem; }
+            .intro-text { font-size: 1.2rem; text-align: center; padding: 0 1rem; }
+            .nav-arrow { bottom: 1.5rem; top: auto; transform: none; }
+            .nav-arrow:hover { transform: scale(1.1); }
+            .nav-arrow.left { left: 1.5rem; }
+            .nav-arrow.right { right: auto; left: calc(1.5rem + 44px + 1rem); }
+            .ui-container { top: 1rem; right: 1rem; }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <div class="intro-overlay" id="introOverlay">
+        <div class="intro-text">The Digestive System</div>
+        <div class="intro-instruction">
+            <span>&larr;</span>
+            <span>Scroll, Swipe, or use <code>&larr;</code> <code>&rarr;</code> keys</span>
+            <span>&rarr;</span>
+        </div>
+    </div>
+
+    <div class="ui-container">
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+            <svg class="sun" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></g></svg>
+            <svg class="moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3A7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+    </div>
+
+    <button class="nav-arrow left" id="nav-left" aria-label="Previous slide">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <button class="nav-arrow right" id="nav-right" aria-label="Next slide">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </button>
+
+    <main class="container">
+        <!-- Slide 1: Mouth -->
+        <section class="slide">
+            <div class="picture-half">
+                <img class="slide-image" src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Illu01_head_neck.jpg" alt="Diagram of the mouth and head">
+            </div>
+            <div class="info-half">
+                <h2>Mouth</h2>
+                <h3>What Happens Here</h3>
+                <p>Digestion begins in the mouth. Food is mechanically broken down by the teeth through chewing (mastication). The tongue helps mix food with saliva to form a soft mass called a bolus, which is then swallowed.</p>
+                <h3>Key Processes</h3>
+                <ul>
+                    <li>Mechanical digestion: Teeth grind and tear food into smaller pieces</li>
+                    <li>Chemical digestion: Saliva begins breaking down starches</li>
+                    <li>Bolus formation: Food is mixed with saliva for easier swallowing</li>
+                </ul>
+                <div class="enzyme-box">
+                    <h4>Enzymes Released</h4>
+                    <ul>
+                        <li><strong>Salivary Amylase (Ptyalin):</strong> Breaks down starch into maltose</li>
+                        <li><strong>Lingual Lipase:</strong> Begins the digestion of fats (minor role)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 2: Oesophagus -->
+        <section class="slide">
+            <div class="picture-half">
+                <img class="slide-image" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Tractus_intestinalis_esophagus.svg/330px-Tractus_intestinalis_esophagus.svg.png" alt="Diagram of the oesophagus">
+            </div>
+            <div class="info-half">
+                <h2>Oesophagus</h2>
+                <h3>What Happens Here</h3>
+                <p>The oesophagus is a muscular tube approximately 25cm long that connects the mouth to the stomach. Food does not simply fall down; it is actively pushed through by rhythmic muscle contractions called peristalsis.</p>
+                <h3>Key Processes</h3>
+                <ul>
+                    <li>Peristalsis: Wave-like muscle contractions push food toward the stomach</li>
+                    <li>The epiglottis closes over the windpipe to prevent food entering the lungs</li>
+                    <li>The lower oesophageal sphincter opens to allow food into the stomach</li>
+                </ul>
+                <div class="enzyme-box">
+                    <h4>Enzymes Released</h4>
+                    <ul>
+                        <li><strong>None:</strong> The oesophagus does not produce digestive enzymes</li>
+                        <li>It secretes mucus to lubricate food passage</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 3: Stomach -->
+        <section class="slide">
+            <div class="picture-half">
+                <img class="slide-image" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Gray1046.svg/500px-Gray1046.svg.png" alt="Diagram of the stomach">
+            </div>
+            <div class="info-half">
+                <h2>Stomach</h2>
+                <h3>What Happens Here</h3>
+                <p>The stomach is a J-shaped muscular organ that churns food and mixes it with gastric juices. Food is broken down into a thick, acidic liquid called chyme. The stomach can hold approximately 1 to 1.5 litres of food.</p>
+                <h3>Key Processes</h3>
+                <ul>
+                    <li>Churning: Strong muscular contractions mix food with gastric juices</li>
+                    <li>Protein digestion begins with the enzyme pepsin</li>
+                    <li>Hydrochloric acid kills bacteria and creates an acidic environment (pH 1.5-3.5)</li>
+                    <li>Food remains in the stomach for 2-6 hours</li>
+                </ul>
+                <div class="enzyme-box">
+                    <h4>Enzymes Released</h4>
+                    <ul>
+                        <li><strong>Pepsin:</strong> Breaks proteins into smaller peptides</li>
+                        <li><strong>Gastric Lipase:</strong> Continues the digestion of fats</li>
+                        <li><strong>Hydrochloric Acid:</strong> Activates pepsin and kills microorganisms</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 4: Small Intestine -->
+        <section class="slide">
+            <div class="picture-half">
+                <img class="slide-image" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Tractus_intestinalis_intestinum_tenue.svg/330px-Tractus_intestinalis_intestinum_tenue.svg.png" alt="Diagram of the small intestine">
+            </div>
+            <div class="info-half">
+                <h2>Small Intestine</h2>
+                <h3>What Happens Here</h3>
+                <p>Despite its name, the small intestine is approximately 6 metres long. This is where most chemical digestion and nutrient absorption occurs. The walls are lined with tiny finger-like projections called villi that increase surface area for absorption.</p>
+                <h3>Key Processes</h3>
+                <ul>
+                    <li>Duodenum: Receives chyme from stomach, bile from liver, and enzymes from pancreas</li>
+                    <li>Jejunum: Primary site of nutrient absorption</li>
+                    <li>Ileum: Absorbs vitamin B12, bile salts, and remaining nutrients</li>
+                </ul>
+                <div class="enzyme-box">
+                    <h4>Enzymes Released</h4>
+                    <ul>
+                        <li><strong>Maltase, Sucrase, Lactase:</strong> Break down sugars into glucose</li>
+                        <li><strong>Peptidases:</strong> Complete protein digestion into amino acids</li>
+                        <li><strong>Intestinal Lipase:</strong> Breaks down fats into fatty acids</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 5: Accessory Organs -->
+        <section class="slide">
+            <div class="picture-half">
+                <img class="slide-image" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Digestive_system_diagram_en.svg/500px-Digestive_system_diagram_en.svg.png" alt="Diagram of the digestive system showing accessory organs">
+            </div>
+            <div class="info-half">
+                <h2>Accessory Organs</h2>
+                <h3>Liver</h3>
+                <p>The largest internal organ. It produces bile (500-1000ml daily) which emulsifies fats, breaking them into smaller droplets for easier digestion. The liver also processes absorbed nutrients and detoxifies harmful substances.</p>
+                <h3>Gallbladder</h3>
+                <p>A small pear-shaped organ that stores and concentrates bile. When fatty food enters the duodenum, the gallbladder contracts and releases bile through the bile duct.</p>
+                <h3>Pancreas</h3>
+                <p>Produces pancreatic juice containing powerful digestive enzymes and bicarbonate to neutralise stomach acid in the duodenum.</p>
+                <div class="enzyme-box">
+                    <h4>Pancreatic Enzymes</h4>
+                    <ul>
+                        <li><strong>Pancreatic Amylase:</strong> Digests carbohydrates into sugars</li>
+                        <li><strong>Trypsin and Chymotrypsin:</strong> Digest proteins into peptides</li>
+                        <li><strong>Pancreatic Lipase:</strong> Primary enzyme for fat digestion</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 6: Large Intestine -->
+        <section class="slide">
+            <div class="picture-half">
+                <img class="slide-image" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Tractus_intestinalis_intestinum_crassum.svg/330px-Tractus_intestinalis_intestinum_crassum.svg.png" alt="Diagram of the large intestine">
+            </div>
+            <div class="info-half">
+                <h2>Large Intestine</h2>
+                <h3>What Happens Here</h3>
+                <p>The large intestine (colon) is approximately 1.5 metres long and 6cm wide. Its primary function is to absorb water and electrolytes from indigestible food matter and form solid faeces.</p>
+                <h3>Key Processes</h3>
+                <ul>
+                    <li>Water absorption: Up to 1.5 litres of water is absorbed daily</li>
+                    <li>Bacterial fermentation: Gut bacteria break down remaining material</li>
+                    <li>Vitamin production: Bacteria synthesise vitamins K and B</li>
+                    <li>Compaction: Waste material is formed into faeces</li>
+                </ul>
+                <div class="enzyme-box">
+                    <h4>Enzymes Released</h4>
+                    <ul>
+                        <li><strong>None:</strong> The large intestine does not produce digestive enzymes</li>
+                        <li>Gut bacteria produce enzymes that ferment fibre</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 7: Rectum -->
+        <section class="slide">
+            <div class="picture-half">
+                <img class="slide-image" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Rectum_anatomy_en.svg/500px-Rectum_anatomy_en.svg.png" alt="Diagram of the rectum">
+            </div>
+            <div class="info-half">
+                <h2>Rectum</h2>
+                <h3>What Happens Here</h3>
+                <p>The rectum is a chamber approximately 12-15cm long that connects the large intestine to the anus. It serves as a temporary storage area for faeces before elimination from the body.</p>
+                <h3>Key Processes</h3>
+                <ul>
+                    <li>Storage: Holds faeces until it is convenient to defecate</li>
+                    <li>Stretch receptors: Nerve endings detect when the rectum is full</li>
+                    <li>Defecation reflex: Signals are sent to the brain creating the urge to defecate</li>
+                    <li>The walls can expand to accommodate increasing amounts of material</li>
+                </ul>
+                <div class="enzyme-box">
+                    <h4>Enzymes Released</h4>
+                    <ul>
+                        <li><strong>None:</strong> The rectum does not produce digestive enzymes</li>
+                        <li>Mucus is secreted to lubricate the passage of faeces</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 8: Anus -->
+        <section class="slide">
+            <div class="picture-half">
+                <img class="slide-image" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Protovsdeuterostomes.svg/500px-Protovsdeuterostomes.svg.png" alt="Diagram showing the anus">
+            </div>
+            <div class="info-half">
+                <h2>Anus</h2>
+                <h3>What Happens Here</h3>
+                <p>The anus is the final part of the digestive tract. It is the opening through which faeces are expelled from the body during defecation. The anus is controlled by two sphincter muscles.</p>
+                <h3>Key Structures</h3>
+                <ul>
+                    <li>Internal anal sphincter: Involuntary muscle that relaxes automatically</li>
+                    <li>External anal sphincter: Voluntary muscle under conscious control</li>
+                    <li>Defecation occurs when both sphincters relax in coordination</li>
+                    <li>The process marks the end of the digestive journey</li>
+                </ul>
+                <div class="enzyme-box">
+                    <h4>Enzymes Released</h4>
+                    <ul>
+                        <li><strong>None:</strong> The anus does not produce any digestive enzymes</li>
+                        <li>No chemical digestion occurs at this stage</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.querySelector('.container');
+            let slides = document.querySelectorAll('.slide');
+            const introOverlay = document.getElementById('introOverlay');
+            const themeToggle = document.getElementById('theme-toggle');
+            const navLeft = document.getElementById('nav-left');
+            const navRight = document.getElementById('nav-right');
+
+            let isTransitioning = false;
+            let currentSlide = 1;
+
+            const setupInfiniteScroll = () => {
+                const firstSlide = slides[0];
+                const lastSlide = slides[slides.length - 1];
+                const firstClone = firstSlide.cloneNode(true);
+                const lastClone = lastSlide.cloneNode(true);
+
+                firstClone.dataset.clone = 'first';
+                lastClone.dataset.clone = 'last';
+
+                container.appendChild(firstClone);
+                container.insertBefore(lastClone, firstSlide);
+                slides = document.querySelectorAll('.slide');
+                container.scrollTo({ left: firstSlide.offsetLeft, behavior: 'instant' });
+            };
+
+            const hideIntro = () => {
+                if (!introOverlay.classList.contains('hidden')) {
+                    introOverlay.classList.add('hidden');
+                }
+            };
+            ['scroll', 'keydown', 'click'].forEach(evt => {
+                window.addEventListener(evt, hideIntro, { once: true });
+            });
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    entry.target.classList.toggle('is-visible', entry.isIntersecting);
+                });
+            }, { root: container, rootMargin: '0px', threshold: 0.6 });
+
+            const scrollContainer = (direction) => {
+                if (isTransitioning) return;
+                isTransitioning = true;
+
+                currentSlide += direction;
+                const targetSlide = slides[currentSlide];
+
+                container.scrollTo({
+                    left: targetSlide.offsetLeft,
+                    behavior: 'smooth'
+                });
+            };
+
+            const handleLoop = () => {
+                const slide = slides[currentSlide];
+                if (slide.dataset.clone === 'first') {
+                    currentSlide = 1;
+                    container.scrollTo({ left: slides[currentSlide].offsetLeft, behavior: 'instant' });
+                } else if (slide.dataset.clone === 'last') {
+                    currentSlide = slides.length - 2;
+                    container.scrollTo({ left: slides[currentSlide].offsetLeft, behavior: 'instant' });
+                }
+                isTransitioning = false;
+            };
+
+            navLeft.addEventListener('click', () => scrollContainer(-1));
+            navRight.addEventListener('click', () => scrollContainer(1));
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight' || e.code === 'Space') {
+                    e.preventDefault();
+                    scrollContainer(1);
+                } else if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    scrollContainer(-1);
+                }
+            });
+
+            container.addEventListener('scrollend', handleLoop);
+
+            const applyTheme = (theme) => {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+            };
+
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                applyTheme(newTheme);
+            });
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            applyTheme(savedTheme);
+
+            setupInfiniteScroll();
+            slides.forEach(slide => observer.observe(slide));
+        });
+    </script>
+</body>
+</html>
